@@ -1,0 +1,44 @@
+{# <h1>Home Page</h1> #}
+
+ {% extends 'base.html.twig' %} 
+ {% block title %}accueuil{% endblock %}
+
+{# //cache menu #}
+{# {% block nav %}
+    
+{% endblock %} #}
+{% block body %}
+  <div class="container">
+    <h1>Home page</h1>
+    <div class="row">
+      {% for post in posts %}
+    
+        {# <h1>{{ post.{{ variable|title }} }} #}
+        {# <h5>{{ post.title }}</h5>
+        <p>{{ post.content }} </p> #}
+        {# <div class="card col-md-3" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">{{ post.title }}</h5>
+            <p class="card-text">{{ post.content }}</p>
+    
+          </div>
+        </div> #}
+      {% include 'partiels/_card.html.twig' %}
+
+      {% else %}
+        <span>aucun element à afficher</span>
+    </div>
+      {% endfor %}
+      <span>name:{{name}}</span>
+      <p>text</p>
+      {% if nb == 10 %}
+        <span>Ce nombre est egale a 10</span>
+      {% elseif nb == 11 %}
+        <span>Ce nombre est egale a 11</span>
+      {% else %}
+        <span>Ce nombre n'est ni egale a 10,ni egale a 11</span>
+      {% endif %}
+    <br><br><br>  
+    {{ myDate|date("d-m-Y-H i:s") }}
+  </div>
+{% endblock %}
