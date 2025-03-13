@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs!{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <br><br><br>
+        <h1>Utilisateurs</h1><br><br><br>
+        {% include 'layouts/_flash_message.html.twig' %}
+        <table class="table">
+            <tr>
+                <th>id</th>
+                <th>email</th>
+                <th>nom</th>
+                <th>Prénom</th>
+                <th>role</th>
+                <th>action</th>
+            </tr>
+            {% for user in users %}
+                <tr>
+                    <td>{{user.id}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.firstName}}</td>
+                    <td>{{user.lastName}}</td>
+                    <td>
+                        {% for role in user.roles %}
+                            {{role}}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if ('ROLE_ADMIN' in user.roles) == false %}
+                            <a onclick="return confirm('voulez vous vraiment affecter le role éditeur a cette utilisateur?')" href="{{path('app_user_to_editor',{'id':user.id})}}" class="btn btn-outline-primary ">Ajouter commme éditeur</a>
+                        <a href"" class="btn btn-danger ">Supprimer</a>
+                        {% endif %}
+                        
+                    </td>
+                </tr>
+            {% endfor %}
+            
+        </table>
+    </div>
+{% endblock %}
