@@ -25,9 +25,9 @@
                     <td>{{user.lastName}}</td>
                     <td>
                         {% if ('ROLE_ADMIN' in user.roles) %}
-                        <span class="text-primary" >administrateur</span>
-                        {% else if ('ROLE_EDITOR' in user.roles) %}
-                            <span class="text-success"> éditeur</span>
+                           <span class="text-primary"> administrateur</span>
+                            {% elseif ('ROLE_EDITOR' in user.roles) %}
+                                <span class="text-success">éditeur</span>
                         {% else %}
                             <span class="text-secondary">client</span>
                         {% endif %}
@@ -38,13 +38,12 @@
                     <td>
                         {% if ('ROLE_ADMIN' in user.roles) == false %}
                             {% if ('ROLE_EDITOR' in user.roles) == false %}
-                               <a onclick="return confirm('voulez vous vraiment affecter le role éditeur a cet utilisateur?')" href="{{path('app_user_to_editor',{'id':user.id})}}" class="btn btn-outline-primary ">Ajouter commme éditeur</a>
-                             
+                                <a onclick="return confirm('voulez vous vraiment affecter le role éditeur a cet utilisateur?')" href="{{path('app_user_to_editor',{'id':user.id})}}" class="btn btn-outline-primary ">Ajouter commme éditeur</a>    
                             {% else %}
-                                 <a onclick="return confirm('voulez vous vraiment retirer le role éditeur a cet utilisateur?')" href="{{path('app_user_remove_editor_role',{'id':user.id})}}" class="btn btn-outline-danger ">Retirer le role éditeur</a>        
+                                <a onclick="return confirm('voulez vous vraiment retier le role éditeur a cet utilisateur?')" href="{{path('app_user_remove_editor_role',{'id':user.id})}}" class="btn btn-danger ">Retirer le role éditeur</a>
                             {% endif %}
                             
-                        <a onclick="return confirm('voulez vous vraiment supprimer  cet utilisateur?')"  href="{{path('app_user_remove',{'id':user.id})}}"class="btn btn-danger ">Supprimer</a>
+                        <a onclick="return confirm('voulez vous vraiment supprimer  cet utilisateur ?')" href="{{path('app_user_remove',{'id': user.id }) }}" class="btn btn-danger ">Supprimer</a>
                         {% endif %}
                         
                     </td>
