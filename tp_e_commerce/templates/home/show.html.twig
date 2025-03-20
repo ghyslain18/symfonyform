@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+
+    <div class="card mb-12" style="margin-top:70px">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src=" {{asset('uploads/images/' ~ product.image)}} " class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+            <div class="card-body">
+                <h1 class="card-title">{{product.name }}</h1>
+                <p class="card-text"> {{product.description }}</p>
+                <a href="" class="text-success">add to card</a>
+                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+            </div>
+            </div>
+        </div>
+
+    </div>
+    <h2>Latest Added Products</h2>
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-3 mt-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="{{ asset('uploads/images/'~ product.image)}}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <a style="text-decoration: none; color:green;" href="{{ path('app_home_product_show' , {'id' :product.id}) }}" class=""><h5 class="card-title">{{product.name}} </h5></a>
+                        <p class="card-text">{{product.description|slice(0,60)}} ... </p>
+                        <a href="#" class="text-success">Add to card</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    {# <div class="row">
+        {% for product in products %}
+            <div class="col-md-3 mt-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="{{ asset('uploads/images/'~ product.image)}}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{product.name}} </h5>
+                        <p class="card-text">{{product.description|slice(0,60)}} ... </p>
+                        <a href="#" class="text-success">Ajouter au panier</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+ #}
+    {# This friendly message is coming from:
+    <ul>
+        <li>Your controller at <code>C:/wamp64/www/perso/tp_e_commerce/src/Controller/HomeController.php</code></li>
+        <li>Your template at <code>C:/wamp64/www/perso/tp_e_commerce/templates/home/index.html.twig</code></li>
+    </ul> #}
+</div>
+{% endblock %}
