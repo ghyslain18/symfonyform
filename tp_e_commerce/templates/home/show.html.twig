@@ -14,8 +14,9 @@
             </div>
             <div class="col-md-8">
             <div class="card-body">
-                <h1 class="card-title">{{product.name }}</h1>
+                <h1 class="card-title text-success">{{product.name }}</h1>
                 <p class="card-text"> {{product.description }}</p>
+                <h3>{{product.price}} EUR</h3>
                 <a href="" class="text-success">add to card</a>
                 <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
             </div>
@@ -32,6 +33,7 @@
                     <div class="card-body">
                         <a style="text-decoration: none; color:green;" href="{{ path('app_home_product_show' , {'id' :product.id}) }}" class=""><h5 class="card-title">{{product.name}} </h5></a>
                         <p class="card-text">{{product.description|slice(0,60)}} ... </p>
+                        <h3>{{product.price}} EUR</h3>
                         <a href="#" class="text-success">Add to card</a>
                     </div>
                 </div>
