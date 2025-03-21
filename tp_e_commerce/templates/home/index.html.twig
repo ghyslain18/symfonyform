@@ -22,11 +22,14 @@
             </div>
         {% endfor %}
     </div>
+    <br><br><br>
 
-    This friendly message is coming from:
+    {{ knp_pagination_render(products,'layouts/pagination_template.html.twig') }}
+
+    {# This friendly message is coming from:
     <ul>
         <li>Your controller at <code>C:/wamp64/www/perso/tp_e_commerce/src/Controller/HomeController.php</code></li>
         <li>Your template at <code>C:/wamp64/www/perso/tp_e_commerce/templates/home/index.html.twig</code></li>
-    </ul>
+    </ul> #}
 </div>
 {% endblock %}

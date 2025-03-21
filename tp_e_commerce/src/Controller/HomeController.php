@@ -6,19 +6,28 @@ use App\Entity\Product;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\SubCategoryRepository;
+//use knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+
 use Symfony\Component\Routing\Attribute\Route;
 
 final class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home', methods:['GET'])]
-    public function index(ProductRepository $productRepository,CategoryRepository $categoryRepository): Response
+    public function index(ProductRepository $productRepository,CategoryRepository $categoryRepository,Request $request,PaginatorInterface $paginator): Response
     {
-
+        $data=$productRepository->findBy([],['id'=>"DESC"]);
+        $products=$paginator->paginate(
+            $data,
+            $request->query->getInt('page',1),
+            4
+        );
         return $this->render('home/index.html.twig', [
             //'controller_name' => 'HomeController',
-            'products' => $productRepository->findBy([],['id'=>"DESC"]),
+            'products' =>$products, // $productRepository->findBy([],['id'=>"DESC"]),
             'categories' => $categoryRepository->findAll(),
         ]);
     }
