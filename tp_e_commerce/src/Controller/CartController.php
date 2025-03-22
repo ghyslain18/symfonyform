@@ -51,5 +51,43 @@ final class CartController extends AbstractController
         //dd($cartWhitData);
 
         return $this->redirectToRoute('app_cart');
+
+       
+    }
+
+    #[Route('/cart/remove/{id}/ ', name: 'app_cart_product_remove', methods: ['GET'])]
+    public function removeToCart($id, SessionInterface $session):Response
+    {
+        $cart = $session->get('cart',[]);
+
+        if (!empty($cart[$id])) {
+            unset($cart[$id]);
+           // $cart[$id]++;
+        } /* else {
+            $session->sett('cart',$cart);
+            //$cart[$id]=1;
+        } */
+        $session->set('cart',$cart);
+        //dd($cartWhitData);
+
+        return $this->redirectToRoute('app_cart');
+    }
+
+    #[Route('/cart/remove/ ', name: 'app_cart_remove', methods: ['GET'])]
+    public function remove( SessionInterface $session):Response
+    {
+         $session->set('cart',[]);
+/* 
+        if (!empty($cart[$id])) {
+            unset($cart[$id]);
+           // $cart[$id]++;
+        } /* else {
+            $session->sett('cart',$cart);
+            //$cart[$id]=1;
+        } */
+       // $session->set('cart',$cart);
+        //dd($cartWhitData); */
+
+        return $this->redirectToRoute('app_cart');
     }
 }

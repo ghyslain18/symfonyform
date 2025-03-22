@@ -8,13 +8,46 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-<div class="example-wrapper">
-    {# <h1>Hello {{ controller_name }}! ✅</h1> #}
+<div class="container">
+    <h1>Cart ✅</h1>
+    <table class="table table-bordered">
+        <tr>
+            <th>Product name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total price</th>
+            <th>Action</th>
+        </tr>
+        {% for item in items %}
+            <tr>
+                <td>{{item.product.name}}</td>
+                <td>{{item.product.price}}</td>
+                <td>{{item.quantity}}</td>
+                <td>{{item.product.price * item.quantity}}</td>
+                <td><a href="{{path('app_cart_product_remove',{'id':item.product.id} )}}" class="text-danger text-decoration-none">Delete to cart</a></td>
+            </tr>
+            {% else %}
+                <p>your cart is empity</p>
+        {% endfor %}
 
-    This friendly message is coming from:
+    </table>
+    {% if total >0 %}
+        <br><br>
+        <h2>Total:{{total}} £<h2>
+        <div class="row">
+            <a href="" class="btn btn-primary col-2 m-lg-1">Valider la commande</a>
+            <a href="{{path('app_cart_remove' )}}" class="btn btn-outline-danger col-2 m-lg-1">Supprimer le panier</a>
+        </div>  
+    {% else %}
+        
+    {% endif %}
+    
+
+
+    {# This friendly message is coming from:
     <ul>
         <li>Your controller at <code>C:/wamp64/www/perso/tp_e_commerce/src/Controller/CartController.php</code></li>
         <li>Your template at <code>C:/wamp64/www/perso/tp_e_commerce/templates/cart/index.html.twig</code></li>
-    </ul>
+    </ul> #}
 </div>
 {% endblock %}
