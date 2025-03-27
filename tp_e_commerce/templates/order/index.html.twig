@@ -8,21 +8,88 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style> 
 
-<div class="container">
-    <div class="row">
-        <div class="col-8">
-            <h1>Checkout ✅</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h1>Checkout ✅</h1>
 
-            {{ form_start(form) }}
-                {{ form_widget(form) }}<br>
-                <input type="submit" value="continer" class="btn btn-outline-primary">
-            {{ form_end(form) }}
-        </div>
-        <div class="col-4"><br><br><br><br>
-            <span>Montant à payer:</span>
-            <h2>{{total}} Eur</h2>
-            <span>Frais de livraison</span>
+                {{ form_start(form) }}
+                    {{ form_widget(form) }}<br>
+                    <input type="submit" value="continer" class="btn btn-outline-primary">
+                {{ form_end(form) }}
+            </div>
+            <div class="col-4"><br><br><br><br>
+                <span>Montant à payer:</span>
+                <h2>
+                    <span id="card-price">{{total}}</span> 
+                    Eur
+                </h2>
+                <span>Frais de livraison</span>
+                <h2>
+                    <span id="shippingCost"></span>
+                    Eur
+                </h2>
+                <span>Montant total à payer</span>
+                <h2>
+                    <span class="total-price"></span>
+                    Eur
+                </h2>
+            </div>
         </div>
     </div>
-</div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            const citySelector = $('#order_city');
+            const cityValue = citySelector.val();
+
+            // Utilisation de backticks ` au lieu de simples quotes '
+            const url = `http://127.0.0.1:8000/city/${cityValue}/shipping/cost`;
+            
+            console.log(url);
+            function ajaxRequest(url) {
+                    $.ajax({
+                    url:url,
+                    type:'GET',
+                    success:function (response) {
+                        const newResponse=JSON.parse(response)
+                        
+                        if (parseInt(newResponse.status)===200) {
+                            //const newResponse=JSON.parse(response)
+                            //console.log(newResponse.status)
+                            $("#shippingCost").text(newResponse.content) 
+                            const cardPrice=parseInt($("#card-price").text());
+                            const shippingCost=parseInt($('#shippingCost').text());
+                            $('.total-price').text(cardPrice+shippingCost);
+
+                            //console.log(shippingCost);
+                               
+                        } else {
+                            
+                        }
+                        
+                    },
+                    error:function (xhr,status,error) {
+                        
+                    }
+                })
+            }
+
+
+            ajaxRequest(url)
+
+            
+
+            citySelector.on('change',function () {
+                const urlUpdate=`http://127.0.0.1:8000/city/${$(this).val()}/shipping/cost`;
+                alert(urlUpdate)
+                ajaxRequest(urlUpdate)
+            })
+
+
+        }); 
+       
+    </script>
+
 {% endblock %}
