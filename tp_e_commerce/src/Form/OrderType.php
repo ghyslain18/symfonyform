@@ -46,6 +46,7 @@ class OrderType extends AbstractType
                 'widget' => 'single_text',
             ]) */
             ->add('city', EntityType::class, [
+                'label' => 'Ville',
                 'class' => City::class,
                 'choice_label' => 'name',
                 
@@ -54,6 +55,9 @@ class OrderType extends AbstractType
                 ]
             
             ])
+            ->add('payOnDelivery', null, [
+                'label' => 'payer à la livraison',
+            ]) 
         ;
     }
 

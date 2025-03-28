@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\ProductRepository;
+use App\Service\Cart;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 //use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -15,9 +16,9 @@ final class CartController extends AbstractController
 
 
     #[Route('/cart', name: 'app_cart', methods: ['GET'])]
-    public function index(SessionInterface $session): Response
+    public function index(SessionInterface $session,Cart $cart): Response
     {
-        $cart=$session->get('cart',[]);
+        /* $cart=$session->get('cart',[]);
         $cartWhitData=[];
         foreach ($cart as $id => $quantity) {
             $cartWhitData[] =[
@@ -31,10 +32,12 @@ final class CartController extends AbstractController
             },
             $cartWhitData,
         ));
-        //dd($total);
+        //dd($total); */
+
+        $data=$cart->getCart($session);
         return $this->render('cart/index.html.twig', [
-            'items' => $cartWhitData,
-            'total'=>$total
+            'items' =>$data['cart'], //$cartWhitData,
+            'total'=>$data['total'], //$total
         ]);
     }
     #[Route('/cart/add/{id}/ ', name: 'app_cart_new', methods: ['GET'])]

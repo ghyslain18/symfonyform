@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\City;
 use App\Entity\Order;
 use App\Form\OrderType;
+use App\Service\Cart;
 use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +16,12 @@ use Symfony\Component\Routing\Attribute\Route;
 final class OrderController extends AbstractController
 {
     #[Route('/order', name: 'app_order')]
-    public function index(Request $request,SessionInterface $session,ProductRepository $productRepository): Response
+    public function index(
+        Request $request,
+        SessionInterface $session,
+        ProductRepository $productRepository,
+        Cart $cart,
+    ): Response
     {
 
         $cart=$session->get('cart',[]);
@@ -39,7 +45,13 @@ final class OrderController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) { 
+            if ($order->IsPayOneDeliVery()) {
+                # code...
+            } else {
+                # code...
+            }
             
+            dd($order);
         }
         return $this->render('order/index.html.twig', [
             //'controller_name' => 'OrderController',
