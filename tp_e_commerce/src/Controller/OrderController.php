@@ -4,12 +4,14 @@ namespace App\Controller;
 
 use App\Entity\City;
 use App\Entity\Order;
+use App\Entity\OrderProducts;
 use App\Form\OrderType;
 use App\Service\Cart;
 use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -19,12 +21,13 @@ final class OrderController extends AbstractController
     public function index(
         Request $request,
         SessionInterface $session,
+        EntityManagerInterface $entityManager,
         ProductRepository $productRepository,
         Cart $cart,
     ): Response
     {
 
-        $cart=$session->get('cart',[]);
+        /* $cart=$session->get('cart',[]);
         $cartWhitData=[];
         foreach ($cart as $id => $quantity) {
             $cartWhitData[] =[
@@ -38,6 +41,9 @@ final class OrderController extends AbstractController
             },
             $cartWhitData,
         ));
+ */
+
+        $data=$cart->getCart($session);
 
 
         $order= new Order();
@@ -45,18 +51,52 @@ final class OrderController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) { 
-            if ($order->IsPayOneDeliVery()) {
-                # code...
-            } else {
+            if ($order->IsPayOnDeliVery()) {
+                if (!empty($data['total'])) {
+                     
+                $order->setTotalPrice($data['total']);
+                $order->setCreatedAt(new \DateTimeImmutable() );
+                $entityManager->persist($order);
+                $entityManager->flush();
+
+                foreach ($data['cart'] as $value) {
+                    $orderProduct=new OrderProducts();
+                    $orderProduct->setOrder($order);
+                    $orderProduct->setProduct($value['product']);
+                    $orderProduct->setQte($value['quantity']);
+                    $entityManager->persist($orderProduct);
+                    $entityManager->flush();
+
+                }
+
+                } else {
+                    # code...
+                }
+                
+               
+                
+                //dd($order);
+            } 
+            else {
                 # code...
             }
+            $session->set('cart',[]);
+            return $this->redirectToRoute('order_ok_message');
             
-            dd($order);
+            //dd($data['cart']);
         }
         return $this->render('order/index.html.twig', [
             //'controller_name' => 'OrderController',
             'form' => $form->createView(),
-            'total'=>$total
+            'total'=>$data['total']
+        ]);
+    }
+
+    #[Route("/order-ok-message",name:"order_ok_message")]
+
+    public function orderMessage():Response {
+        return $this->render('order/order_message.twig',[
+            
         ]);
     }
 
