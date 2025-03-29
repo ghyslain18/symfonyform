@@ -8,8 +8,10 @@ use App\Entity\OrderProducts;
 use App\Form\OrderType;
 use App\Service\Cart;
 use App\Repository\ProductRepository;
+use App\Repository\OrderRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -98,6 +100,21 @@ final class OrderController extends AbstractController
         return $this->render('order/order_message.twig',[
             
         ]);
+    }
+
+    #[Route('/editor/order', name: 'app_orders_show')]
+    public function getAllOrder(OrderRepository $orderRepository, Request $request,PaginatorInterface $paginator) : Response 
+    {
+        $data = $orderRepository->findBy([],['id'=>'DESC']);
+        $order=$paginator->paginate(
+            $data,
+            $request->query->getInt('page',1),
+            10
+        );
+        //dd($order);
+        return $this->render('order/order.html.twig',[
+            "orders"=>$order,
+        ]);  
     }
 
     #[Route('/city/{id}/shipping/cost', name: 'app_city_shipping_cost')]

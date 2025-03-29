@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+     <div class="container">
+        <h1>Order</h1>
+         {% for order in orders %}
+        
+            <table class="table table-bordered">
+                <h2>Commande n:{{order.id}}</h2>
+                <span>Information du client</span>
+                <tr>
+                    <th>nom</th>
+                    <th>prenom</th>
+                    <th>telephone</th>
+                    <th>adresse</th>
+                    <th>ville</th>
+                </tr>
+                <tr>
+                    <th>{{order.firstName}}</td>
+                    <th>{{order.lastName}}</td>
+                    <th>{{order.phone}}</td>
+                    <th>{{ order.adresse }}</td>
+                    <td>{{order.city.name}} </td>
+                </tr>
+            </table> <br><br>
+            <span>Corps de la commande</span>
+            <table class="table table-bordered">
+                {#<h5>Information du client</h5>#}
+                <tr>
+                    <th>Image de produit</th>
+                    <th>Nom du produit</th>
+                    <th>Description</th>
+                    <th>Prix unitaire</th>
+                    <th>Qantité</th>
+                    <th>Prix Total</th>
+                   {# <th>ville</th>#}
+                </tr>
+                {% for product in order.orderProducts %}
+                    <tr>
+                        <td><img style="width: 80px" src="{{ asset('uploads/images/'~ product.product.image)}}"></td>
+                        <th>{{product.product.name}}</td>
+                        <th>{{product.product.description(0,200)}} </th>
+                        <th>{{product.product.price}} Eur</td>
+                        <th>{{product.qte}}</td>
+                        <th>{{ product.product.price * product.qte }} Eur</td>
+                        {#<td>{{order.city.name}} </td>#}
+                    </tr>
+                {% endfor %}
+                
+            </table>
+            <h5>Frais de livraison : {{ order.city.shippingCost }} Eur </h5>
+            <h5> Total à payer : {{ order.totalPrice}} Eur <h5>
+            <a href="" class="btn btn-outline-primary col-2 m-lg-1">Marquer comme livrée</a>
+            <a href="" class="btn btn-outline-danger col-2 m-lg-1">Supprimer la commande</a>
+             <br><br>
+        {% endfor %}
+        
+       {#  <p>
+            Votre commande a été envoyé
+        </p> #}
+        {{ knp_pagination_render(orders,'layouts/pagination_template.html.twig') }}
+
+    </div>
+{% endblock %}
