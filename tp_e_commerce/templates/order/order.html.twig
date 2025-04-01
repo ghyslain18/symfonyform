@@ -4,7 +4,7 @@
      <div class="container">
         <h1>Order</h1>
         {% include 'layouts/_flash_message.html.twig' %}
-         {% for order in orders %}
+        {% for order in orders %}
         
             <table class="table table-bordered">
                 <h2>Commande n:{{order.id}}</h2>
@@ -56,6 +56,7 @@
             </table>
             <h5>Frais de livraison : {{ order.city.shippingCost }} Eur </h5>
             <h5> Total à payer : {{ order.totalPrice}} Eur <h5>
+            <a href="{{ path('app_bill',{'id':order.id} )}} " class="btn btn-outline-success col-2 m-lg-1">Imprimer la facture</a>
             {% if order.isCompleted != true %}
                 <a href="{{ path('app_orders_is_commpleted_update',{'id':order.id} )}} " class="btn btn-outline-primary col-2 m-lg-1">Marquer comme livrée</a>
             {% else %}
