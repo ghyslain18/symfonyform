@@ -15,10 +15,14 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class OrderController extends AbstractController
 {
+    public function __construct(private MailerInterface $mailer) {}
+    
     #[Route('/order', name: 'app_order')]
     public function index(
         Request $request,
@@ -26,6 +30,7 @@ final class OrderController extends AbstractController
         EntityManagerInterface $entityManager,
         ProductRepository $productRepository,
         Cart $cart,
+        OrderRepository $order_repository,
     ): Response
     {
 
@@ -83,6 +88,22 @@ final class OrderController extends AbstractController
                 # code...
             }
             $session->set('cart',[]);
+            
+            $html=$this->renderView(
+                'mail/orderConfirm.html.twig',
+                [
+                    'order'=>$order
+                ]
+            );
+            $email=(new Email())
+            ->from('myShop@gmail.com')
+            ->to($order-> getEmail())
+            ->subject('Comfirmation de reception de la commande')
+            ->html($html);
+
+            $this->mailer->send($email);
+
+            
             return $this->redirectToRoute('order_ok_message');
             
             //dd($data['cart']);
