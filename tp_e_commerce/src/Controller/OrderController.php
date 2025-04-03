@@ -9,6 +9,7 @@ use App\Form\OrderType;
 use App\Service\Cart;
 use App\Repository\ProductRepository;
 use App\Repository\OrderRepository;
+use App\Service\StripePayment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Knp\Component\Pager\PaginatorInterface;
@@ -30,7 +31,7 @@ final class OrderController extends AbstractController
         EntityManagerInterface $entityManager,
         ProductRepository $productRepository,
         Cart $cart,
-        OrderRepository $order_repository,
+        OrderRepository $orderRepository,
     ): Response
     {
 
@@ -61,53 +62,66 @@ final class OrderController extends AbstractController
             if ($order->IsPayOnDeliVery()) {
                 if (!empty($data['total'])) {
                      
-                $order->setTotalPrice($data['total']);
-                $order->setCreatedAt(new \DateTimeImmutable() );
-                $entityManager->persist($order);
-                $entityManager->flush();
-
-                foreach ($data['cart'] as $value) {
-                    $orderProduct=new OrderProducts();
-                    $orderProduct->setOrder($order);
-                    $orderProduct->setProduct($value['product']);
-                    $orderProduct->setQte($value['quantity']);
-                    $entityManager->persist($orderProduct);
+                    $order->setTotalPrice($data['total']);
+                    $order->setCreatedAt(new \DateTimeImmutable() );
+                    $entityManager->persist($order);
                     $entityManager->flush();
 
-                }
+                    foreach ($data['cart'] as $value) {
+                        $orderProduct=new OrderProducts();
+                        $orderProduct->setOrder($order);
+                        $orderProduct->setProduct($value['product']);
+                        $orderProduct->setQte($value['quantity']);
+                        $entityManager->persist($orderProduct);
+                        $entityManager->flush();
 
-                } else {
-                    # code...
-                }
+                    }
+
+                } 
                 
-               
+                $session->set('cart',[]);
+                $html=$this->renderView(
+                    'mail/orderConfirm.html.twig',
+                    [
+                        'order'=>$order
+                    ]
+                );
+                $email=(new Email())
+                ->from('myShop@gmail.com')
+                ->to($order-> getEmail())
+                ->subject('Comfirmation de reception de la commande')
+                ->html($html);
+
+                $this->mailer->send($email);
+                
+                return $this->redirectToRoute('order_ok_message');
+
                 
                 //dd($order);
             } 
-            else {
-                # code...
-            }
-            $session->set('cart',[]);
-            
-            $html=$this->renderView(
-                'mail/orderConfirm.html.twig',
-                [
-                    'order'=>$order
-                ]
-            );
-            $email=(new Email())
-            ->from('myShop@gmail.com')
-            ->to($order-> getEmail())
-            ->subject('Comfirmation de reception de la commande')
-            ->html($html);
 
-            $this->mailer->send($email);
+            $payment= new StripePayment();
+            $shippingCost=$order->getCity()->getShippingCost();
+            $payment ->startPayement($data,$shippingCost);
+            $stripRedirectUrl=$payment->getStripeRedirectUrl();
+
+            //dd($stripRedirectUrl);
+
+            return $this->redirect($stripRedirectUrl);
 
             
-            return $this->redirectToRoute('order_ok_message');
+            
+            
+            
+            
+
+            
+            
             
             //dd($data['cart']);
         }
+
+       
         return $this->render('order/index.html.twig', [
             //'controller_name' => 'OrderController',
             'form' => $form->createView(),

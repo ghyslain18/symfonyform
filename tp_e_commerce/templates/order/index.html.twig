@@ -13,7 +13,7 @@
             <div class="col-8">
                 <h1>Checkout ✅</h1>
 
-                {{ form_start(form) }}
+                {{ form_start(form,{"attr":{'data-turbo':'false'}}) }}
                     {{ form_widget(form) }}<br>
                     <input type="submit" value="continer" class="btn btn-outline-primary">
                 {{ form_end(form) }}

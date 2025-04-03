@@ -35,6 +35,11 @@ final class CartController extends AbstractController
         //dd($total); */
 
         $data=$cart->getCart($session);
+        $cartProducts=$data['cart'];
+        $products=[];
+        foreach ($cartProducts as $value) {
+            # code...
+        }
         return $this->render('cart/index.html.twig', [
             'items' =>$data['cart'], //$cartWhitData,
             'total'=>$data['total'], //$total
