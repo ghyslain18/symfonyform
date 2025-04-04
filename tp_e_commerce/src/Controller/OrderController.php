@@ -59,11 +59,13 @@ final class OrderController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) { 
-            if ($order->IsPayOnDeliVery()) {
+            //if ($order->IsPayOnDeliVery()) {
                 if (!empty($data['total'])) {
                      
-                    $order->setTotalPrice($data['total']);
+                    $totalPrice=$data['total'] + $order->getCity()->getShippingCost();
+                    $order->setTotalPrice($totalPrice);
                     $order->setCreatedAt(new \DateTimeImmutable() );
+                    $order->setIsPaymentCompleted(0);
                     $entityManager->persist($order);
                     $entityManager->flush();
 
@@ -77,32 +79,40 @@ final class OrderController extends AbstractController
 
                     }
 
+                    if ($order->IsPayOnDeliVery()) {
+                        $session->set('cart',[]);
+                        $html=$this->renderView(
+                            'mail/orderConfirm.html.twig',
+                            [
+                                'order'=>$order
+                            ]
+                        );
+                        $email=(new Email())
+                        ->from('myShop@gmail.com')
+                        ->to($order-> getEmail())
+                        ->subject('Comfirmation de reception de la commande')
+                        ->html($html);
+        
+                        $this->mailer->send($email);
+                        
+                        return $this->redirectToRoute('order_ok_message');
+                    } else {
+                        # code...
+                    }
+                    
+
                 } 
                 
-                $session->set('cart',[]);
-                $html=$this->renderView(
-                    'mail/orderConfirm.html.twig',
-                    [
-                        'order'=>$order
-                    ]
-                );
-                $email=(new Email())
-                ->from('myShop@gmail.com')
-                ->to($order-> getEmail())
-                ->subject('Comfirmation de reception de la commande')
-                ->html($html);
-
-                $this->mailer->send($email);
-                
-                return $this->redirectToRoute('order_ok_message');
+               
+             
 
                 
                 //dd($order);
-            } 
+            //} 
 
             $payment= new StripePayment();
             $shippingCost=$order->getCity()->getShippingCost();
-            $payment ->startPayement($data,$shippingCost);
+            $payment ->startPayement($data,$shippingCost,$order->getId());
             $stripRedirectUrl=$payment->getStripeRedirectUrl();
 
             //dd($stripRedirectUrl);

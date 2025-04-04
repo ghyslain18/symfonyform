@@ -13,7 +13,7 @@ class StripePayment
         Stripe::setApiVersion('2025-03-31.basil');
     }
 
-    public function startPayement($cart,$shippingCost) {
+    public function startPayement($cart,$shippingCost,$orderId) {
         $cartProducts=$cart['cart'];
         $products=[
             [
@@ -50,7 +50,12 @@ class StripePayment
                 'allowed_countries'=>['FR',"CM","BJ"]
 
             ],
-            'metadata'=>[],
+            'payment_intent_data'=>
+                [
+                    'metadata'=>[
+                        'orderId'=>$orderId
+                    ],
+                ]
         ]);
         $this->redirectUrl= $session->url;
         //dd($cart);
