@@ -51,6 +51,24 @@
               </ul>
             </li>
         {% endif %}
+        {% if  is_granted("ROLE_EDITOR")  %}
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Commandes
+              </a>
+              <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{{ path('app_orders_show',{'type':'is-completed'}) }}">Commandes livrées</a></li>
+                  <li><a class="dropdown-item" href="{{ path('app_orders_show',{'type':'pay-on-stripe-not-delivered'}) }}">Commandes payées en ligne non livrées</a></li>
+                  <li><a class="dropdown-item" href="{{ path('app_orders_show',{'type':'pay-on-stripe-is-delivered'}) }}">Commande payées en ligne livrées</a></li>
+                   <li><a class="dropdown-item" href="{{ path('app_orders_show',{'type':'not-completed'}) }}">Commandes non livrées</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                 {#  <li><a class="dropdown-item" href="{{ path('app_product_index') }}">Produit</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{{ path('app_user') }}">Utilisateurs</a></li> #}
+              </ul>
+        </li>
+        {% endif %}
+        
         {% if app.user == false %}
           <li class="nav-item">
             <a href={{path('app_register')}} class="nav-link" >S'inscrire</a>

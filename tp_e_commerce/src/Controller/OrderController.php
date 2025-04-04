@@ -147,10 +147,25 @@ final class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/editor/order', name: 'app_orders_show')]
-    public function getAllOrder(OrderRepository $orderRepository, Request $request,PaginatorInterface $paginator) : Response 
+    #[Route('/editor/order/{type}/', name: 'app_orders_show')]
+    public function getAllOrder($type,OrderRepository $orderRepository, Request $request,PaginatorInterface $paginator) : Response 
     {
-        $data = $orderRepository->findBy([],['id'=>'DESC']);
+        if ($type == 'is-completed') {
+            $data=$orderRepository->findBy(['isCompleted'=>1],['id'=>'DESC']);
+        } elseif ($type=='pay-on-stripe-not-delivered') {
+            $data=$orderRepository->findBy(['isCompleted'=>null,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
+        }
+        elseif ($type=='pay-on-stripe-is-delivered') {
+            $data=$orderRepository->findBy(['isCompleted'=>1,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
+        }
+        elseif($type == 'not-completed') {
+            $data=$orderRepository->findBy(['isCompleted'=>null],['id'=>'DESC']);
+        }
+        else {
+            # code...
+        }
+        
+        //$data = $orderRepository->findBy([],['id'=>'DESC']);
         $order=$paginator->paginate(
             $data,
             $request->query->getInt('page',1),
@@ -162,8 +177,23 @@ final class OrderController extends AbstractController
         ]);  
     }
 
+   /*  #[Route('/editor/order', name: 'app_orders_show')]
+    public function getAllOrderDelivered(OrderRepository $orderRepository, Request $request,PaginatorInterface $paginator) : Response 
+    {
+        $data = $orderRepository->findBy(['isCompleted'=>1],['id'=>'DESC']);
+        $order=$paginator->paginate(
+            $data,
+            $request->query->getInt('page',1),
+            10
+        );
+        //dd($order);
+        return $this->render('order/order.html.twig',[
+            "orders"=>$order,
+        ]);  
+    }
+ */
     #[Route('/editor/order/{id}/is-completed/update', name: 'app_orders_is_commpleted_update')]
-    public function isCompletedUpate($id,OrderRepository $orderRepository,EntityManagerInterface $entityManager):Response
+    public function isCompletedUpate($id,OrderRepository $orderRepository,EntityManagerInterface $entityManager,Request $request):Response
     {
         $order = $orderRepository->find($id);
         $order->setIsCompleted(true) ;
@@ -173,7 +203,7 @@ final class OrderController extends AbstractController
            'modification effectuée'
 
         );
-        return $this->redirectToRoute('app_orders_show');
+        return $this->redirect($request->headers->get('referer'));
     }
 
     #[Route('/editor/order/{id}/remove', name: 'app_orders_remove')]
