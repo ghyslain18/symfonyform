@@ -19,6 +19,8 @@ final class HomeController extends AbstractController
     #[Route('/', name: 'app_home', methods:['GET'])]
     public function index(ProductRepository $productRepository,CategoryRepository $categoryRepository,Request $request,PaginatorInterface $paginator): Response
     {
+       
+        
         $data=$productRepository->findBy([],['id'=>"DESC"]);
         $products=$paginator->paginate(
             $data,

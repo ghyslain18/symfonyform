@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}search results!{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+    <h1>Resultats de la recherche de " {{word}} " </h1>
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-3 mt-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="{{ asset('uploads/images/'~ product.image)}}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <a style="text-decoration: none; color:green;" href="{{ path('app_home_product_show' , {'id' :product.id}) }}" class=""><h5 class="card-title">{{product.name}} </h5></a>
+                        <p class="card-text">{{product.description|slice(0,60)}} ... </p>
+                        <h3>{{product.price}} EUR</h3>
+                        <a href="{{ path('app_cart_new',{'id':product.id}) }}" class="text-success text-decoration-none">Ajouter au panier</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <br><br><br>
+
+{#     {{ knp_pagination_render(products,'layouts/pagination_template.html.twig') }}
+ #}
+    {# This friendly message is coming from:
+    <ul>
+        <li>Your controller at <code>C:/wamp64/www/perso/tp_e_commerce/src/Controller/HomeController.php</code></li>
+        <li>Your template at <code>C:/wamp64/www/perso/tp_e_commerce/templates/home/index.html.twig</code></li>
+    </ul> #}
+</div>
+{% endblock %}

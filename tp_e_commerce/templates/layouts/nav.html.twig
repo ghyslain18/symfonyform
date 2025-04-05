@@ -84,8 +84,8 @@
        
        
       </ul>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <form data-turbo="false" method="gett" action="{{path('app_search_engine')}}" class="d-flex" role="search">
+        <input name="word" class="form-control me-2" type="search" placeholder="rechercher un produit" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
     </div>

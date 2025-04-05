@@ -16,16 +16,25 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    public function searchEngin(string $query){
+        return $this->createQueryBuilder('p')
+            ->where('p.name LIKE :query')
+            ->orWhere('p.description LIKE  :query')
+            ->setParameter('query','%'.$query.'%')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */
-    //    public function findByExampleField($value): array
+    //    public function findByIdUp($value): array
     //    {
     //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
+    //            ->andWhere('p.id > :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
+    //            ->orderBy('p.id', 'DESC')
+    //            //->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
